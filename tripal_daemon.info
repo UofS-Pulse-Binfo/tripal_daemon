@@ -3,6 +3,8 @@ description = Creates a Daemon to run Tripal Jobs as they are submitted.
 core = 7.x
 package = Tripal Extensions
 
+configure = admin/tripal/extension/tripal_daemon/settings
+
 dependencies[] = drushd
 dependencies[] = tripal_core
 

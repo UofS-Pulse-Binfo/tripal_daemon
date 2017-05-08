@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Non-Drush Tripal Daemon functionality.
@@ -21,4 +20,23 @@ function tripal_daemon_daemon_api_info() {
   );
 
   return $daemon;
+}
+
+/**
+ * Implements hook_menu().
+ */
+function tripal_daemon_menu() {
+  $items = array();
+
+  $items['admin/tripal/extension/tripal_daemon/settings'] = array(
+    'title' => 'Settings',
+    'description' => 'Default settings for the Tripal Drush Daemon.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('tripal_daemon_admin_settings_form'),
+    'access arguments' => array('administer tripal'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'includes/tripal_daemon.admin.inc',
+   );
+
+  return $items;
 }
