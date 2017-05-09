@@ -21,6 +21,15 @@ function tripal_daemon_admin_settings_form($form, $form_state) {
     '#title' => 'Notifications',
   );
 
+  $admin_user = user_load(1);
+  $form['notifications']['email'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Email',
+    '#description' => 'The email address the notification will be sent to',
+    '#disabled' => TRUE,
+    '#value' => $admin_user->mail,
+  );
+
   $form['notifications']['notify'] = array(
     '#title' => 'Notify Admin by Email if not running.',
     '#type' => 'checkbox',
@@ -48,5 +57,23 @@ function tripal_daemon_admin_settings_form_submit($form, &$form_state) {
 
   // Save Notification Settings.
   variable_set('tripald_daemon_notify', $form_state['values']['notify']);
+
+  // Actually handle turning off/on the email.
+  // Currently the drush daemon has no way to configure this option :-(
+  // However, the daemon saves the timestamp for when to next check if the daemon is
+  // dead in a Drupal Variable. Thus we can highjack that variable to tell Drush Daemon
+  // to never check the daemon by setting this variable to FALSE.
+  if ($form_state['values']['notify'] == FALSE) {
+    variable_set('drushd_next_notification_tripal_daemon', FALSE);
+    drupal_set_message('Notifications for Tripal Daemon are turned off. This means that if the daemon dies unexpectedly you will not be notified via email.', 'warning');
+  }
+  // Ensure the daemon notification is turned on.
+  // Turn the daemon notification back on by setting the next time to check the daemon
+  // to the current time.
+  else {
+    variable_set('drushd_next_notification_tripal_daemon', time());
+    drupal_set_message('Notifications for Tripal Daemon are turned on.');
+
+  }
 
 }
